@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import React, { useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,47 +8,110 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
+  KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
-
+import * as Font from "expo-font";
+// import { AppLoading } from "expo";
+const initialState = {
+  email: "",
+  password: "",
+};
+// const loadApplication = async () => {
+//   await Font.loadAsync({
+//     "DMMono-Regular": require("./assets/fonts/DMMono-Regular.ttf"),
+//   });
+// };
 export default function App() {
-  console.log(Platform.OS);
+  // console.log(Platform.OS);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+  const [state, setState] = useState(initialState);
+  // const [isReady, setIsReady] = useState(false);
+  const keyboardHide = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+    console.log(state);
+    setState(initialState);
+  };
+  const keyboardHideAnyTouch = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
+  // if (!isReady) {
+  //   return (
+  //     <AppLoading
+  //       startAsync={loadApplication}
+  //       onFinish={() => setIsReady(true)}
+  //        onError={console.warn}
+  //     />
+  //   );
+  // }
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require("./assets/images/bg-rain.jpg")}
-        style={styles.bgImage}
-      >
-        <View
-          style={{
-            flex: 1,
-            backgroundColor: "#00000099",
-            justifyContent: "center",
-          }}
+    <TouchableWithoutFeedback onPress={keyboardHideAnyTouch}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={require("./assets/images/bg-rain.jpg")}
+          style={styles.bgImage}
         >
-          <Text style={styles.titleApp} textAlign={"center"}>
-            My first app!
-          </Text>
-          <View style={styles.form}>
-            <View style={{ marginTop: 30 }}>
-              <Text style={styles.inputTitle}>EMAIL ADDRES</Text>
-              <TextInput style={styles.input} textAlign={"center"} />
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            style={{ flex: 1 }}
+          >
+            <View style={styles.displayBg}>
+              <View style={styles.header}>
+                <Text style={styles.headerTitle} textAlign={"center"}>
+                  My first app!
+                </Text>
+              </View>
+              <View
+                style={{
+                  ...styles.form,
+                  marginBottom: isShowKeyboard ? 10 : 50,
+                }}
+              >
+                <View style={{ marginTop: 30 }}>
+                  <Text style={styles.inputTitle}>EMAIL ADDRES</Text>
+                  <TextInput
+                    style={styles.input}
+                    textAlign={"center"}
+                    onFocus={() => setIsShowKeyboard(true)}
+                    value={state.email}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({ ...prevState, email: value }))
+                    }
+                  />
+                </View>
+                <View style={{ marginTop: 20 }}>
+                  <Text style={styles.inputTitle}>PASSWORD</Text>
+                  <TextInput
+                    style={styles.input}
+                    textAlign={"center"}
+                    secureTextEntry={true}
+                    onFocus={() => setIsShowKeyboard(true)}
+                    value={state.password}
+                    onChangeText={(value) =>
+                      setState((prevState) => ({
+                        ...prevState,
+                        password: value,
+                      }))
+                    }
+                  />
+                </View>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.btn}
+                  onPress={keyboardHide}
+                >
+                  <Text style={styles.btnTitle}>SIGN IN</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-            <View style={{ marginTop: 20 }}>
-              <Text style={styles.inputTitle}>PASSWORD</Text>
-              <TextInput
-                style={styles.input}
-                textAlign={"center"}
-                secureTextEntry={true}
-              />
-            </View>
-            <TouchableOpacity activeOpacity={0.8} style={styles.btn}>
-              <Text style={styles.btnTitle}>SIGN IN</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ImageBackground>
-      <StatusBar style="auto" />
-    </View>
+          </KeyboardAvoidingView>
+        </ImageBackground>
+        <StatusBar style="auto" />
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -56,7 +120,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  titleApp: {
+  displayBg: {
+    flex: 1,
+    backgroundColor: "#00000099",
+    justifyContent: "flex-end",
+  },
+  header: { alignItems: "center", marginBottom: 50 },
+  headerTitle: {
     fontSize: 40,
     fontWeight: "700",
     color: "#ff4500",
@@ -65,7 +135,6 @@ const styles = StyleSheet.create({
   bgImage: {
     flex: 1,
     resizeMode: "cover",
-    justifyContent: "center",
   },
   input: {
     height: 50,
@@ -84,16 +153,27 @@ const styles = StyleSheet.create({
     color: "#fff5ee",
   },
   btn: {
-    height: 40,
-    backgroundColor: Platform.OS === "ios" ? "transparent" : "#ff7f50",
     marginTop: 30,
+    height: 40,
     borderRadius: 10,
-    borderColor: Platform.OS === "ios" ? "#00bfff" : "transparent",
-    borderWidth: Platform.OS === "ios" ? 2 : "transparent",
     justifyContent: "center",
     alignItems: "center",
     fontSize: 18,
     marginHorizontal: 20,
+    // backgroundColor: Platform.OS === "ios" ? "transparent" : "#ff7f50",
+    // borderColor: Platform.OS === "ios" ? "#00bfff" : "transparent",
+    // borderWidth: Platform.OS === "ios" ? 2 : "transparent",
+    ...Platform.select({
+      ios: {
+        backgroundColor: "transparent",
+        borderColor: "#00bfff",
+        borderWidth: 2,
+      },
+      android: {
+        backgroundColor: "#ff7f50",
+        borderColor: "transparent",
+      },
+    }),
   },
   btnTitle: {
     fontSize: 18,
