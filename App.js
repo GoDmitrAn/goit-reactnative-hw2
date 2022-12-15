@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -11,23 +11,66 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  Dimensions,
 } from "react-native";
 import * as Font from "expo-font";
-// import { AppLoading } from "expo";
+import * as SplashScreen from "expo-splash-screen";
+
 const initialState = {
   email: "",
   password: "",
 };
-// const loadApplication = async () => {
-//   await Font.loadAsync({
-//     "DMMono-Regular": require("./assets/fonts/DMMono-Regular.ttf"),
-//   });
-// };
+
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
+
 export default function App() {
   // console.log(Platform.OS);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [state, setState] = useState(initialState);
-  // const [isReady, setIsReady] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [dimensions, setDimensions] = useState(
+    Dimensions.get("window").width - 40 * 2
+  );
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // Pre-load fonts, make any API calls you need to do here
+        await Font.loadAsync({
+          "Roboto-Reg": require("./assets/fonts/Roboto-Regular.ttf"),
+          "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
+        });
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        // Tell the application to render
+        setIsReady(true);
+      }
+    }
+    const onChange = () => {
+      const width = Dimensions.get("window").width - 40 * 2;
+      console.log("width", width);
+      setDimensions(width);
+    };
+    Dimensions.addEventListener("change", onChange);
+    prepare();
+    return () => {
+      Dimensions.removeEventListener("change", onChange);
+    };
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (isReady) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `setAppIsReady`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      await SplashScreen.hideAsync();
+    }
+  }, [isReady]);
+
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
@@ -38,18 +81,13 @@ export default function App() {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
   };
-  // if (!isReady) {
-  //   return (
-  //     <AppLoading
-  //       startAsync={loadApplication}
-  //       onFinish={() => setIsReady(true)}
-  //        onError={console.warn}
-  //     />
-  //   );
-  // }
+
+  if (!isReady) {
+    return null;
+  }
   return (
     <TouchableWithoutFeedback onPress={keyboardHideAnyTouch}>
-      <View style={styles.container}>
+      <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground
           source={require("./assets/images/bg-rain.jpg")}
           style={styles.bgImage}
@@ -68,6 +106,7 @@ export default function App() {
                 style={{
                   ...styles.form,
                   marginBottom: isShowKeyboard ? 10 : 50,
+                  width: dimensions,
                 }}
               >
                 <View style={{ marginTop: 30 }}>
@@ -124,12 +163,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#00000099",
     justifyContent: "flex-end",
+    alignItems: "center",
   },
   header: { alignItems: "center", marginBottom: 50 },
   headerTitle: {
-    fontSize: 40,
-    fontWeight: "700",
+    fontSize: 42,
+
     color: "#ff4500",
+
+    fontFamily: "Roboto-Bold",
   },
 
   bgImage: {
@@ -145,12 +187,15 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 26,
   },
-  form: { marginHorizontal: 30 },
+  form: {
+    // marginHorizontal: 30
+  },
   inputTitle: {
     marginBottom: 10,
     fontSize: 18,
-    fontWeight: "700",
+
     color: "#fff5ee",
+    fontFamily: "Roboto-Reg",
   },
   btn: {
     marginTop: 30,
@@ -160,9 +205,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontSize: 18,
     marginHorizontal: 20,
-    // backgroundColor: Platform.OS === "ios" ? "transparent" : "#ff7f50",
-    // borderColor: Platform.OS === "ios" ? "#00bfff" : "transparent",
-    // borderWidth: Platform.OS === "ios" ? 2 : "transparent",
     ...Platform.select({
       ios: {
         backgroundColor: "transparent",
