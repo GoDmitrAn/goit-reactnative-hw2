@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
+import { RegistrationScreen } from "./Screens/RegistrationScreen";
 
 const initialState = {
   email: "",
@@ -40,6 +41,7 @@ export default function App() {
         await Font.loadAsync({
           "Roboto-Reg": require("./assets/fonts/Roboto-Regular.ttf"),
           "Roboto-Bold": require("./assets/fonts/Roboto-Bold.ttf"),
+          "Roboto-Med": require("./assets/fonts/Roboto-Medium.ttf"),
         });
       } catch (e) {
         console.warn(e);
@@ -56,7 +58,7 @@ export default function App() {
     Dimensions.addEventListener("change", onChange);
     prepare();
     return () => {
-      Dimensions.removeEventListener("change", onChange);
+      // Dimensions.removeEventListener("change", onChange);
     };
   }, []);
 
@@ -89,15 +91,17 @@ export default function App() {
     <TouchableWithoutFeedback onPress={keyboardHideAnyTouch}>
       <View style={styles.container} onLayout={onLayoutRootView}>
         <ImageBackground
-          source={require("./assets/images/bg-rain.jpg")}
+          source={require("./assets/images/photo-bg.jpg")}
           style={styles.bgImage}
         >
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={{ flex: 1 }}
           >
-            <View style={styles.displayBg}>
-              <View style={styles.header}>
+            <View style={styles.section}>
+              <RegistrationScreen />
+
+              {/* <View style={styles.header}>
                 <Text style={styles.headerTitle} textAlign={"center"}>
                   My first app!
                 </Text>
@@ -144,7 +148,7 @@ export default function App() {
                 >
                   <Text style={styles.btnTitle}>SIGN IN</Text>
                 </TouchableOpacity>
-              </View>
+              </View> */}
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -159,11 +163,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  displayBg: {
+  section: {
     flex: 1,
-    backgroundColor: "#00000099",
     justifyContent: "flex-end",
-    alignItems: "center",
   },
   header: { alignItems: "center", marginBottom: 50 },
   headerTitle: {
