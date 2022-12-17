@@ -2,11 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
-  Text,
   View,
   ImageBackground,
-  TextInput,
-  TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
   Keyboard,
@@ -15,20 +12,15 @@ import {
 } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { RegistrationScreen } from "./Screens/RegistrationScreen";
-
-const initialState = {
-  email: "",
-  password: "",
-};
+// import { RegistrationScreen } from "./Screens/RegistrationScreen";
+import { LoginScreen } from "./Screens/LoginScreen";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
-  // console.log(Platform.OS);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-  const [state, setState] = useState(initialState);
+
   const [isReady, setIsReady] = useState(false);
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 40 * 2
@@ -51,14 +43,14 @@ export default function App() {
       }
     }
     const onChange = () => {
-      const width = Dimensions.get("window").width - 40 * 2;
+      const width = Dimensions.get("window").width;
       console.log("width", width);
       setDimensions(width);
     };
     Dimensions.addEventListener("change", onChange);
     prepare();
     return () => {
-      // Dimensions.removeEventListener("change", onChange);
+      Dimensions.removeEventListener("change", onChange);
     };
   }, []);
 
@@ -73,12 +65,6 @@ export default function App() {
     }
   }, [isReady]);
 
-  const keyboardHide = () => {
-    setIsShowKeyboard(false);
-    Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
-  };
   const keyboardHideAnyTouch = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
@@ -99,56 +85,16 @@ export default function App() {
             style={{ flex: 1 }}
           >
             <View style={styles.section}>
-              <RegistrationScreen />
-
-              {/* <View style={styles.header}>
-                <Text style={styles.headerTitle} textAlign={"center"}>
-                  My first app!
-                </Text>
-              </View>
-              <View
-                style={{
-                  ...styles.form,
-                  marginBottom: isShowKeyboard ? 10 : 50,
-                  width: dimensions,
-                }}
-              >
-                <View style={{ marginTop: 30 }}>
-                  <Text style={styles.inputTitle}>EMAIL ADDRES</Text>
-                  <TextInput
-                    style={styles.input}
-                    textAlign={"center"}
-                    onFocus={() => setIsShowKeyboard(true)}
-                    value={state.email}
-                    onChangeText={(value) =>
-                      setState((prevState) => ({ ...prevState, email: value }))
-                    }
-                  />
-                </View>
-                <View style={{ marginTop: 20 }}>
-                  <Text style={styles.inputTitle}>PASSWORD</Text>
-                  <TextInput
-                    style={styles.input}
-                    textAlign={"center"}
-                    secureTextEntry={true}
-                    onFocus={() => setIsShowKeyboard(true)}
-                    value={state.password}
-                    onChangeText={(value) =>
-                      setState((prevState) => ({
-                        ...prevState,
-                        password: value,
-                      }))
-                    }
-                  />
-                </View>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  style={styles.btn}
-                  onPress={keyboardHide}
-                >
-                  <Text style={styles.btnTitle}>SIGN IN</Text>
-                </TouchableOpacity>
-              </View> */}
+              {/* <RegistrationScreen
+                isShowKeyboard={isShowKeyboard}
+                setIsShowKeyboard={setIsShowKeyboard}
+                dimensions={dimensions}
+              /> */}
+              <LoginScreen
+                isShowKeyboard={isShowKeyboard}
+                setIsShowKeyboard={setIsShowKeyboard}
+                dimensions={dimensions}
+              />
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -180,47 +126,47 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
   },
-  input: {
-    height: 50,
+  // input: {
+  //   height: 50,
 
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: "#d0b887",
-    color: "#fff",
-    fontSize: 26,
-  },
-  form: {
-    // marginHorizontal: 30
-  },
-  inputTitle: {
-    marginBottom: 10,
-    fontSize: 18,
+  //   borderWidth: 2,
+  //   borderRadius: 10,
+  //   borderColor: "#d0b887",
+  //   color: "#fff",
+  //   fontSize: 26,
+  // },
+  // form: {
+  //   // marginHorizontal: 30
+  // },
+  // inputTitle: {
+  //   marginBottom: 10,
+  //   fontSize: 18,
 
-    color: "#fff5ee",
-    fontFamily: "Roboto-Reg",
-  },
-  btn: {
-    marginTop: 30,
-    height: 40,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    fontSize: 18,
-    marginHorizontal: 20,
-    ...Platform.select({
-      ios: {
-        backgroundColor: "transparent",
-        borderColor: "#00bfff",
-        borderWidth: 2,
-      },
-      android: {
-        backgroundColor: "#ff7f50",
-        borderColor: "transparent",
-      },
-    }),
-  },
-  btnTitle: {
-    fontSize: 18,
-    color: Platform.OS === "ios" ? "#00bfff" : "#fff8dc",
-  },
+  //   color: "#fff5ee",
+  //   fontFamily: "Roboto-Reg",
+  // },
+  // btn: {
+  //   marginTop: 30,
+  //   height: 40,
+  //   borderRadius: 10,
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   fontSize: 18,
+  //   marginHorizontal: 20,
+  //   ...Platform.select({
+  //     ios: {
+  //       backgroundColor: "transparent",
+  //       borderColor: "#00bfff",
+  //       borderWidth: 2,
+  //     },
+  //     android: {
+  //       backgroundColor: "#ff7f50",
+  //       borderColor: "transparent",
+  //     },
+  //   }),
+  // },
+  // btnTitle: {
+  //   fontSize: 18,
+  //   color: Platform.OS === "ios" ? "#00bfff" : "#fff8dc",
+  // },
 });
