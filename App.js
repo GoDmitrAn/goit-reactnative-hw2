@@ -12,15 +12,14 @@ import {
 } from "react-native";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-// import { RegistrationScreen } from "./Screens/RegistrationScreen";
-import { LoginScreen } from "./Screens/LoginScreen";
+import { RegistrationScreen } from "./Screens/RegistrationScreen";
+// import { LoginScreen } from "./Screens/LoginScreen";
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
-
   const [isReady, setIsReady] = useState(false);
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 40 * 2
@@ -85,16 +84,16 @@ export default function App() {
             style={{ flex: 1 }}
           >
             <View style={styles.section}>
-              {/* <RegistrationScreen
-                isShowKeyboard={isShowKeyboard}
-                setIsShowKeyboard={setIsShowKeyboard}
-                dimensions={dimensions}
-              /> */}
-              <LoginScreen
+              <RegistrationScreen
                 isShowKeyboard={isShowKeyboard}
                 setIsShowKeyboard={setIsShowKeyboard}
                 dimensions={dimensions}
               />
+              {/* <LoginScreen
+                isShowKeyboard={isShowKeyboard}
+                setIsShowKeyboard={setIsShowKeyboard}
+                dimensions={dimensions}
+              /> */}
             </View>
           </KeyboardAvoidingView>
         </ImageBackground>
@@ -126,47 +125,4 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: "cover",
   },
-  // input: {
-  //   height: 50,
-
-  //   borderWidth: 2,
-  //   borderRadius: 10,
-  //   borderColor: "#d0b887",
-  //   color: "#fff",
-  //   fontSize: 26,
-  // },
-  // form: {
-  //   // marginHorizontal: 30
-  // },
-  // inputTitle: {
-  //   marginBottom: 10,
-  //   fontSize: 18,
-
-  //   color: "#fff5ee",
-  //   fontFamily: "Roboto-Reg",
-  // },
-  // btn: {
-  //   marginTop: 30,
-  //   height: 40,
-  //   borderRadius: 10,
-  //   justifyContent: "center",
-  //   alignItems: "center",
-  //   fontSize: 18,
-  //   marginHorizontal: 20,
-  //   ...Platform.select({
-  //     ios: {
-  //       backgroundColor: "transparent",
-  //       borderColor: "#00bfff",
-  //       borderWidth: 2,
-  //     },
-  //     android: {
-  //       backgroundColor: "#ff7f50",
-  //       borderColor: "transparent",
-  //     },
-  //   }),
-  // },
-  // btnTitle: {
-  //   fontSize: 18,
-  //   color: Platform.OS === "ios" ? "#00bfff" : "#fff8dc",
-  // },
 });
