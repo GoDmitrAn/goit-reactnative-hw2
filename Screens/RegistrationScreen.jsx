@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   StyleSheet,
@@ -7,6 +7,10 @@ import {
   TouchableOpacity,
   View,
   Keyboard,
+  ImageBackground,
+  Dimensions,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { MaterialIcons } from "@expo/vector-icons";
 const initialState = {
@@ -14,12 +18,21 @@ const initialState = {
   email: "",
   password: "",
 };
-export const RegistrationScreen = ({
-  isShowKeyboard,
-  setIsShowKeyboard,
-  dimensions,
-}) => {
+export const RegistrationScreen = () => {
   const [state, setState] = useState(initialState);
+  const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
+  const [dimensions, setDimensions] = useState(
+    Dimensions.get("window").width - 40 * 2
+  );
+  useEffect(() => {
+    const onChange = () => {
+      const width = Dimensions.get("window").width;
+      console.log("width", width);
+      setDimensions(width);
+    };
+    Dimensions.addEventListener("change", onChange);
+  }, []);
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -27,82 +40,109 @@ export const RegistrationScreen = ({
     console.log(state);
     setState(initialState);
   };
-
+  const keyboardHideAnyTouch = () => {
+    setIsShowKeyboard(false);
+    Keyboard.dismiss();
+  };
   return (
-    <View style={styles.formBox}>
-      <View
-        style={[
-          styles.userPhotoBox,
-          { transform: [{ translateX: -60 }, { translateY: -60 }] },
-        ]}
+    <TouchableWithoutFeedback onPress={keyboardHideAnyTouch}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
       >
-        <View style={styles.userPhoto}></View>
-        <MaterialIcons
-          name="add-circle-outline"
-          size={25}
-          style={styles.addUserBtn}
-        />
-      </View>
-      <Text style={styles.titleForm}>Registration</Text>
-      <View
-        style={{
-          ...styles.form,
-          marginBottom: isShowKeyboard ? -90 : 78,
-          marginHorizontal: dimensions < 400 ? 16 : 50,
-        }}
-      >
-        <TextInput
-          placeholder="Login"
-          value={state.login}
-          style={styles.input}
-          onFocus={() => {
-            setIsShowKeyboard(true);
-          }}
-          onBlur={() => {
-            setIsShowKeyboard(false);
-          }}
-          onChangeText={(value) =>
-            setState((prevState) => ({ ...prevState, login: value }))
-          }
-        />
-        <TextInput
-          placeholder="Email"
-          value={state.email}
-          style={styles.input}
-          onFocus={() => setIsShowKeyboard(true)}
-          onBlur={() => {
-            setIsShowKeyboard(false);
-          }}
-          onChangeText={(value) =>
-            setState((prevState) => ({ ...prevState, email: value }))
-          }
-        />
-        <TextInput
-          placeholder="Password"
-          value={state.password}
-          style={{ ...styles.input, marginBottom: 43 }}
-          secureTextEntry={true}
-          onFocus={() => setIsShowKeyboard(true)}
-          onBlur={() => {
-            setIsShowKeyboard(false);
-          }}
-          onChangeText={(value) =>
-            setState((prevState) => ({ ...prevState, password: value }))
-          }
-        />
-        <TouchableOpacity
-          activeOpacity={0.8}
-          style={styles.btn}
-          onPress={keyboardHide}
-        >
-          <Text style={styles.btnTitle}>Sign up</Text>
-        </TouchableOpacity>
-        <Text style={styles.bottomText}>Already have an account? Sign in.</Text>
-      </View>
-    </View>
+        <View style={styles.container}>
+          <ImageBackground
+            source={require("../assets/images/photo-bg.jpg")}
+            style={styles.bgImage}
+          >
+            <View style={styles.formBox}>
+              <View
+                style={[
+                  styles.userPhotoBox,
+                  { transform: [{ translateX: -60 }, { translateY: -60 }] },
+                ]}
+              >
+                <View style={styles.userPhoto}></View>
+                <MaterialIcons
+                  name="add-circle-outline"
+                  size={25}
+                  style={styles.addUserBtn}
+                />
+              </View>
+              <Text style={styles.titleForm}>Registration</Text>
+              <View
+                style={{
+                  ...styles.form,
+                  marginBottom: isShowKeyboard ? 40 : 78,
+                  marginHorizontal: dimensions < 400 ? 16 : 50,
+                }}
+              >
+                <TextInput
+                  placeholder="Login"
+                  value={state.login}
+                  style={styles.input}
+                  onFocus={() => {
+                    setIsShowKeyboard(true);
+                  }}
+                  onBlur={() => {
+                    setIsShowKeyboard(false);
+                  }}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, login: value }))
+                  }
+                />
+                <TextInput
+                  placeholder="Email"
+                  value={state.email}
+                  style={styles.input}
+                  onFocus={() => setIsShowKeyboard(true)}
+                  onBlur={() => {
+                    setIsShowKeyboard(false);
+                  }}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, email: value }))
+                  }
+                />
+                <TextInput
+                  placeholder="Password"
+                  value={state.password}
+                  style={{ ...styles.input, marginBottom: 43 }}
+                  secureTextEntry={true}
+                  onFocus={() => setIsShowKeyboard(true)}
+                  onBlur={() => {
+                    setIsShowKeyboard(false);
+                  }}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, password: value }))
+                  }
+                />
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  style={styles.btn}
+                  onPress={keyboardHide}
+                >
+                  <Text style={styles.btnTitle}>Sign up</Text>
+                </TouchableOpacity>
+                <Text style={styles.bottomText}>
+                  Already have an account? Sign in.
+                </Text>
+              </View>
+            </View>
+          </ImageBackground>
+        </View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 };
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  bgImage: {
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "flex-end",
+  },
   formBox: {
     backgroundColor: "#fff",
     paddingTop: 92,
