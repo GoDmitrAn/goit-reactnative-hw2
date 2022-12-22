@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   StyleSheet,
@@ -12,14 +12,16 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
 } from "react-native";
-
+import { MaterialIcons } from "@expo/vector-icons";
 const initialState = {
+  login: "",
   email: "",
   password: "",
 };
-export const LoginScreen = () => {
+export const RegistrationScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
+
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 40 * 2
   );
@@ -31,6 +33,7 @@ export const LoginScreen = () => {
     };
     Dimensions.addEventListener("change", onChange);
   }, []);
+
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
@@ -49,18 +52,45 @@ export const LoginScreen = () => {
       >
         <View style={styles.container}>
           <ImageBackground
-            source={require("../assets/images/photo-bg.jpg")}
+            source={require("../../assets/images/photo-bg.jpg")}
             style={styles.bgImage}
           >
             <View style={styles.formBox}>
-              <Text style={styles.titleForm}>Sign In</Text>
+              <View
+                style={[
+                  styles.userPhotoBox,
+                  { transform: [{ translateX: -60 }, { translateY: -60 }] },
+                ]}
+              >
+                <View style={styles.userPhoto}></View>
+                <MaterialIcons
+                  name="add-circle-outline"
+                  size={25}
+                  style={styles.addUserBtn}
+                />
+              </View>
+              <Text style={styles.titleForm}>Registration</Text>
               <View
                 style={{
                   ...styles.form,
-                  marginBottom: isShowKeyboard ? 70 : 144,
+                  marginBottom: isShowKeyboard ? 40 : 78,
                   marginHorizontal: dimensions < 400 ? 16 : 50,
                 }}
               >
+                <TextInput
+                  placeholder="Login"
+                  value={state.login}
+                  style={styles.input}
+                  onFocus={() => {
+                    setIsShowKeyboard(true);
+                  }}
+                  onBlur={() => {
+                    setIsShowKeyboard(false);
+                  }}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({ ...prevState, login: value }))
+                  }
+                />
                 <TextInput
                   placeholder="Email"
                   value={state.email}
@@ -91,9 +121,16 @@ export const LoginScreen = () => {
                   style={styles.btn}
                   onPress={keyboardHide}
                 >
-                  <Text style={styles.btnTitle}>Sign in</Text>
+                  <Text style={styles.btnTitle}>Sign up</Text>
                 </TouchableOpacity>
-                <Text style={styles.bottomText}>No account? Sign up.</Text>
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onPress={() => navigation.navigate("Login")}
+                >
+                  <Text style={styles.bottomText}>
+                    Already have an account? Sign in.
+                  </Text>
+                </TouchableOpacity>
               </View>
             </View>
           </ImageBackground>
@@ -113,13 +150,28 @@ const styles = StyleSheet.create({
   },
   formBox: {
     backgroundColor: "#fff",
-    paddingTop: 32,
+    paddingTop: 92,
 
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
     position: "relative",
   },
-
+  userPhotoBox: {
+    position: "absolute",
+    left: "50%",
+  },
+  userPhoto: {
+    width: 120,
+    height: 120,
+    backgroundColor: "#F6F6F6",
+    borderRadius: 16,
+  },
+  addUserBtn: {
+    position: "absolute",
+    color: "#FF6C00",
+    right: -13,
+    bottom: 14,
+  },
   titleForm: {
     textAlign: "center",
     marginBottom: 32,
