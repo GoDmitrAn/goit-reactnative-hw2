@@ -13,17 +13,29 @@ const MainTab = createBottomTabNavigator();
 
 const HomeScreen = () => {
   return (
-    <MainTab.Navigator screenOptions={{ tabBarShowLabel: false }}>
+    <MainTab.Navigator
+      screenOptions={{
+        tabBarShowLabel: false,
+        tabBarActiveTintColor: "#ff6c00",
+        tabBarInactiveTintColor: "#21212180",
+        tabBarStyle: { height: 83 },
+        tabBarItemStyle: { marginBottom: 22, paddingTop: 8 },
+      }}
+    >
       <MainTab.Screen
         options={{
           headerShown: true,
           tabBarIcon: ({ focused, size, color }) => (
-            <MaterialCommunityIcons
-              name="postage-stamp"
-              size={size}
-              color={color}
-            />
+            <Ionicons name="grid" size={size} color={color} />
           ),
+          title: "Publications",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontFamily: "Roboto-Med",
+            fontSize: 17,
+            lineHeight: 22,
+            letterSpacing: -0.41,
+          },
         }}
         name="Posts"
         component={PostsScreen}
@@ -32,13 +44,15 @@ const HomeScreen = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, size, color }) => (
-            <Ionicons
-              name="create"
-              size={size}
-              color={color}
-              focused={{ size: 44 }}
-            />
+            <Ionicons name="add" size={size} color={color} />
           ),
+          tabBarIconStyle: {
+            width: 70,
+            height: 40,
+            backgroundColor: "#ff6c00",
+            borderRadius: 20,
+          },
+          tabBarActiveTintColor: "#fff",
         }}
         name="Create"
         component={CreateScreen}
@@ -47,7 +61,7 @@ const HomeScreen = () => {
         options={{
           headerShown: false,
           tabBarIcon: ({ focused, size, color }) => (
-            <AntDesign name="profile" size={size} color={color} />
+            <AntDesign name="user" size={size} color={color} />
           ),
         }}
         name="Profile"
