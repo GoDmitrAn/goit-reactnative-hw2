@@ -5,13 +5,14 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import PostsScreen from "./PostsScreen";
 import CreateScreen from "./CreateScreen";
 import ProfileScreen from "./ProfileScreen";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import { Entypo } from "@expo/vector-icons";
 
 const MainTab = createBottomTabNavigator();
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   return (
     <MainTab.Navigator
       screenOptions={{
@@ -36,16 +37,35 @@ const HomeScreen = () => {
             lineHeight: 22,
             letterSpacing: -0.41,
           },
+          headerRight: ({ focused, size, color }) => (
+            <Entypo
+              name="log-out"
+              size={24}
+              color={color}
+              onPress={() => {
+                navigation.navigate("Login");
+              }}
+              style={{ marginRight: 20 }}
+            />
+          ),
         }}
         name="Posts"
         component={PostsScreen}
       />
       <MainTab.Screen
         options={{
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ focused, size, color }) => (
             <Ionicons name="add" size={size} color={color} />
           ),
+          title: "Create post",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontFamily: "Roboto-Med",
+            fontSize: 17,
+            lineHeight: 22,
+            letterSpacing: -0.41,
+          },
           tabBarIconStyle: {
             width: 70,
             height: 40,

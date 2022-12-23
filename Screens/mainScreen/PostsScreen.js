@@ -21,6 +21,11 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 32,
     paddingLeft: 16,
+    backgroundColor: "#fff",
+    borderTopColor: "#21212170",
+    borderTopWidth: 1,
+    borderBottomColor: "#21212170",
+    borderBottomWidth: 1,
   },
   publicationsItem: {
     height: 60,
