@@ -37,9 +37,21 @@ const useRoute = (Auth) => {
   }
   return (
     <MainTab.Navigator>
-      <MainTab.Screen name="Posts" component={PostsScreen} />
-      <MainTab.Screen name="Create" component={CreateScreen} />
-      <MainTab.Screen name="Profile" component={ProfileScreen} />
+      <MainTab.Screen
+        options={{ headerShown: false }}
+        name="Posts"
+        component={PostsScreen}
+      />
+      <MainTab.Screen
+        options={{ headerShown: false }}
+        name="Create"
+        component={CreateScreen}
+      />
+      <MainTab.Screen
+        options={{ headerShown: false }}
+        name="Profile"
+        component={ProfileScreen}
+      />
     </MainTab.Navigator>
   );
 };
