@@ -18,7 +18,7 @@ const initialState = {
   email: "",
   password: "",
 };
-export const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
   const [dimensions, setDimensions] = useState(
@@ -58,7 +58,7 @@ export const LoginScreen = ({ navigation }) => {
               <View
                 style={{
                   ...styles.form,
-                  marginBottom: isShowKeyboard ? 70 : 144,
+                  marginBottom: isShowKeyboard ? -90 : 144,
                   marginHorizontal: dimensions < 400 ? 16 : 50,
                 }}
               >
@@ -90,7 +90,10 @@ export const LoginScreen = ({ navigation }) => {
                 <TouchableOpacity
                   activeOpacity={0.8}
                   style={styles.btn}
-                  onPress={keyboardHide}
+                  onPress={() => {
+                    keyboardHide;
+                    navigation.navigate("Home", { screen: "Posts" });
+                  }}
                 >
                   <Text style={styles.btnTitle}>Sign in</Text>
                 </TouchableOpacity>
@@ -108,6 +111,7 @@ export const LoginScreen = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -171,3 +175,4 @@ const styles = StyleSheet.create({
     color: "#1B4371",
   },
 });
+export default LoginScreen;

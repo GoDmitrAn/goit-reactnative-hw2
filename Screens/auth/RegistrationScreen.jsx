@@ -18,7 +18,7 @@ const initialState = {
   email: "",
   password: "",
 };
-export const RegistrationScreen = ({ navigation }) => {
+const RegistrationScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
   const [isShowKeyboard, setIsShowKeyboard] = useState(false);
 
@@ -73,7 +73,7 @@ export const RegistrationScreen = ({ navigation }) => {
               <View
                 style={{
                   ...styles.form,
-                  marginBottom: isShowKeyboard ? 40 : 78,
+                  marginBottom: isShowKeyboard ? -90 : 78,
                   marginHorizontal: dimensions < 400 ? 16 : 50,
                 }}
               >
@@ -119,7 +119,10 @@ export const RegistrationScreen = ({ navigation }) => {
                 <TouchableOpacity
                   activeOpacity={0.8}
                   style={styles.btn}
-                  onPress={keyboardHide}
+                  onPress={() => {
+                    keyboardHide;
+                    navigation.navigate("Home", { screen: "Posts" });
+                  }}
                 >
                   <Text style={styles.btnTitle}>Sign up</Text>
                 </TouchableOpacity>
@@ -139,6 +142,7 @@ export const RegistrationScreen = ({ navigation }) => {
     </TouchableWithoutFeedback>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -217,3 +221,4 @@ const styles = StyleSheet.create({
     color: "#1B4371",
   },
 });
+export default RegistrationScreen;
