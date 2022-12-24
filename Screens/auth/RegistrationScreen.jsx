@@ -120,7 +120,7 @@ const RegistrationScreen = ({ navigation }) => {
                   activeOpacity={0.8}
                   style={styles.btn}
                   onPress={() => {
-                    keyboardHide;
+                    keyboardHide();
                     navigation.navigate("Home", { screen: "Posts" });
                   }}
                 >

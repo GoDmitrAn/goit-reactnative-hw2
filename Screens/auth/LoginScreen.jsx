@@ -11,7 +11,6 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
-  Button,
 } from "react-native";
 
 const initialState = {
@@ -90,7 +89,7 @@ const LoginScreen = ({ navigation }) => {
                   activeOpacity={0.8}
                   style={styles.btn}
                   onPress={() => {
-                    keyboardHide;
+                    keyboardHide();
                     navigation.navigate("Home", { screen: "Posts" });
                   }}
                 >

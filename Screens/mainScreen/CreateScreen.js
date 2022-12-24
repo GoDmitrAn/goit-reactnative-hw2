@@ -1,6 +1,10 @@
 import React from "react";
+import { Camera, CameraType } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 import { useEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+
 import {
   StyleSheet,
   Text,
@@ -23,12 +27,23 @@ const CreateScreen = ({ navigation }) => {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 40 * 2
   );
+  const [hasPermission, setHasPermission] = useState(null);
+  const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+
   useEffect(() => {
     const onChange = () => {
       const width = Dimensions.get("window").width;
       setDimensions(width);
     };
     Dimensions.addEventListener("change", onChange);
+
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
   }, []);
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -39,6 +54,12 @@ const CreateScreen = ({ navigation }) => {
   const keyboardHideAnyTouch = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
+  };
+  const takePhoto = async () => {
+    if (cameraRef) {
+      const { uri } = await cameraRef.takePictureAsync();
+      await MediaLibrary.createAssetAsync(uri);
+    }
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHideAnyTouch}>
@@ -54,18 +75,47 @@ const CreateScreen = ({ navigation }) => {
             }}
           >
             <View style={styles.photoBox}>
-              <View style={styles.locationPhoto}>
-                <MaterialIcons
-                  name="add-a-photo"
-                  size={44}
-                  color="#BDBDBD"
-                  style={{
-                    padding: 20,
-                    borderRadius: 50,
-                    backgroundColor: "#fff",
-                  }}
-                />
-              </View>
+              {hasPermission === null && <View />}
+              {hasPermission === false && <Text>No access to camera</Text>}
+              {hasPermission && (
+                <View style={styles.locationPhoto}>
+                  <Camera
+                    style={styles.camera}
+                    type={type}
+                    ref={(ref) => {
+                      setCameraRef(ref);
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={styles.snapContainer}
+                      onPress={takePhoto}
+                    >
+                      <Ionicons
+                        name="camera"
+                        size={30}
+                        color="#fDfDBD"
+                        style={{ padding: 10 }}
+                      />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.flipContainer}
+                      onPress={() => {
+                        setType(
+                          type === Camera.Constants.Type.back
+                            ? Camera.Constants.Type.front
+                            : Camera.Constants.Type.back
+                        );
+                      }}
+                    >
+                      <MaterialIcons
+                        name="flip-camera-android"
+                        size={24}
+                        color="red"
+                      />
+                    </TouchableOpacity>
+                  </Camera>
+                </View>
+              )}
               <Text style={styles.uploadBtn}>Upload photo</Text>
             </View>
 
@@ -130,16 +180,33 @@ const styles = StyleSheet.create({
   },
   photoBox: { marginBottom: 32 },
   locationPhoto: {
-    height: 240,
+    height: 340,
     width: "100%",
     backgroundColor: "#F6F6F6",
-    borderWidth: 1,
-    borderColor: "#E8E8E8",
-
-    borderRadius: 8,
+    // borderWidth: 1,
+    // borderColor: "#E8E8E8",
+    // borderRadius: 8,
     marginBottom: 8,
+  },
+  camera: {
+    flex: 1,
+    height: "100%",
+    flexDirection: "row",
+    alignItems: "flex-end",
     justifyContent: "center",
+  },
+
+  flipContainer: { marginLeft: 30, marginBottom: 30 },
+  snapContainer: {
+    borderColor: "#fff",
+    borderRadius: 32,
+    height: 62,
+    width: 62,
+    borderWidth: 1,
+    backgroundColor: "#ffffff50",
     alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
   },
   uploadBtn: {
     fontFamily: "Roboto-Reg",
