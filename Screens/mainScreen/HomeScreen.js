@@ -73,6 +73,7 @@ const HomeScreen = ({ navigation }) => {
             borderRadius: 20,
           },
           tabBarActiveTintColor: "#fff",
+          unmountOnBlur: true,
         }}
         name="Create"
         component={CreateScreen}

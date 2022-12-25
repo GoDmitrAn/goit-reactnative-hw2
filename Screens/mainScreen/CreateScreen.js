@@ -1,6 +1,7 @@
 import React from "react";
 import { Camera, CameraType } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
+import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -15,6 +16,7 @@ import {
   Dimensions,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
 
 const initialState = {
@@ -27,9 +29,14 @@ const CreateScreen = ({ navigation }) => {
   const [dimensions, setDimensions] = useState(
     Dimensions.get("window").width - 40 * 2
   );
+
   const [hasPermission, setHasPermission] = useState(null);
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const [photo, setPhoto] = useState(null);
+
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     const onChange = () => {
@@ -44,7 +51,19 @@ const CreateScreen = ({ navigation }) => {
 
       setHasPermission(status === "granted");
     })();
+
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      setLocation(location);
+    })();
   }, []);
+
   const keyboardHide = () => {
     setIsShowKeyboard(false);
     Keyboard.dismiss();
@@ -59,7 +78,11 @@ const CreateScreen = ({ navigation }) => {
     if (cameraRef) {
       const { uri } = await cameraRef.takePictureAsync();
       await MediaLibrary.createAssetAsync(uri);
+      setPhoto(uri);
     }
+  };
+  const sendPhoto = () => {
+    navigation.navigate("Posts", { photo });
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHideAnyTouch}>
@@ -74,55 +97,68 @@ const CreateScreen = ({ navigation }) => {
               marginHorizontal: dimensions < 400 ? 16 : 50,
             }}
           >
-            <View style={styles.photoBox}>
-              {hasPermission === null && <View />}
-              {hasPermission === false && <Text>No access to camera</Text>}
-              {hasPermission && (
-                <View style={styles.locationPhoto}>
-                  <Camera
-                    style={styles.camera}
-                    type={type}
-                    ref={(ref) => {
-                      setCameraRef(ref);
-                    }}
-                  >
-                    <TouchableOpacity
-                      style={styles.snapContainer}
-                      onPress={takePhoto}
-                    >
-                      <Ionicons
-                        name="camera"
-                        size={30}
-                        color="#fDfDBD"
-                        style={{ padding: 10 }}
-                      />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      style={styles.flipContainer}
-                      onPress={() => {
-                        setType(
-                          type === Camera.Constants.Type.back
-                            ? Camera.Constants.Type.front
-                            : Camera.Constants.Type.back
-                        );
+            {!isShowKeyboard && (
+              <View style={styles.photoBox}>
+                {hasPermission === null && <View />}
+                {hasPermission === false && <Text>No access to camera</Text>}
+                {hasPermission && (
+                  <View style={styles.locationPhoto}>
+                    <Camera
+                      style={styles.camera}
+                      type={type}
+                      ref={(ref) => {
+                        setCameraRef(ref);
                       }}
                     >
-                      <MaterialIcons
-                        name="flip-camera-android"
-                        size={24}
-                        color="red"
-                      />
-                    </TouchableOpacity>
-                  </Camera>
-                </View>
-              )}
-              <Text style={styles.uploadBtn}>Upload photo</Text>
-            </View>
+                      {photo && (
+                        <Image
+                          source={{ uri: photo }}
+                          style={{
+                            width: 70,
+                            height: 40,
+                            marginRight: 30,
+                            marginBottom: 20,
+                          }}
+                        />
+                      )}
+                      <TouchableOpacity
+                        style={styles.snapContainer}
+                        onPress={takePhoto}
+                      >
+                        <Ionicons
+                          name="camera"
+                          size={30}
+                          color="#fDfDBD"
+                          style={{ padding: 10 }}
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.flipContainer}
+                        onPress={() => {
+                          setType(
+                            type === Camera.Constants.Type.back
+                              ? Camera.Constants.Type.front
+                              : Camera.Constants.Type.back
+                          );
+                        }}
+                      >
+                        <MaterialIcons
+                          name="flip-camera-android"
+                          size={24}
+                          color="red"
+                        />
+                      </TouchableOpacity>
+                    </Camera>
+                  </View>
+                )}
+                <Text style={styles.uploadBtn}>Upload photo</Text>
+              </View>
+            )}
 
             <View
               style={{
                 ...styles.form,
-                marginBottom: isShowKeyboard ? -70 : 0,
+                marginBottom: isShowKeyboard ? 100 : 0,
               }}
             >
               <TextInput
@@ -154,8 +190,10 @@ const CreateScreen = ({ navigation }) => {
                 activeOpacity={0.8}
                 style={styles.btn}
                 onPress={() => {
-                  keyboardHide;
-                  navigation.navigate("Home", { screen: "Posts" });
+                  // keyboardHide;
+                  // navigation.navigate("Home", { screen: "Posts" });
+                  keyboardHide();
+                  sendPhoto();
                 }}
               >
                 <Text style={styles.btnTitle}>Publish</Text>
@@ -180,20 +218,16 @@ const styles = StyleSheet.create({
   },
   photoBox: { marginBottom: 32 },
   locationPhoto: {
-    height: 340,
     width: "100%",
     backgroundColor: "#F6F6F6",
-    // borderWidth: 1,
-    // borderColor: "#E8E8E8",
-    // borderRadius: 8,
     marginBottom: 8,
   },
   camera: {
-    flex: 1,
     height: "100%",
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "center",
+    // borderRadius: 20,
   },
 
   flipContainer: { marginLeft: 30, marginBottom: 30 },
@@ -218,6 +252,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     paddingTop: 32,
     position: "relative",
+    flex: 1,
+    justifyContent: "flex-end",
   },
 
   titleForm: {
