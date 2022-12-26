@@ -70,10 +70,6 @@ const DefaultScreen = ({ route, navigation }) => {
           );
         }}
       />
-
-      <TouchableOpacity>
-        <Text style={styles.linkTitle}>Go to Comments</Text>
-      </TouchableOpacity>
     </View>
   );
 };
@@ -116,7 +112,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 15,
   },
-  linkTitle: { textAlign: "center" },
+
   descTitle: {
     fontFamily: "Roboto-Med",
     fontSize: 16,

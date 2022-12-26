@@ -5,6 +5,7 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 
 import {
   StyleSheet,
@@ -125,10 +126,8 @@ const CreateScreen = ({ navigation }) => {
                         <Image
                           source={{ uri: photo }}
                           style={{
-                            width: 70,
-                            height: 40,
-                            marginRight: 30,
-                            marginBottom: 20,
+                            width: "100%",
+                            height: "100%",
                           }}
                         />
                       )}
@@ -215,6 +214,11 @@ const CreateScreen = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           </View>
+          <View style={styles.trashBox}>
+            <TouchableOpacity style={styles.trash}>
+              <Feather name="trash-2" size={24} color="#bdbdbd" />
+            </TouchableOpacity>
+          </View>
         </View>
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
@@ -234,18 +238,23 @@ const styles = StyleSheet.create({
   photoBox: { marginBottom: 32 },
   locationPhoto: {
     width: "100%",
+    height: 240,
     backgroundColor: "#F6F6F6",
     marginBottom: 8,
   },
   camera: {
     height: "100%",
-    flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
     justifyContent: "center",
-    borderRadius: 20,
+    borderRadius: 20, //dont work
   },
 
-  flipContainer: { marginLeft: 30, marginBottom: 30 },
+  flipContainer: {
+    marginLeft: 30,
+    marginBottom: 20,
+    position: "absolute",
+    bottom: 0,
+  },
   snapContainer: {
     borderColor: "#fff",
     borderRadius: 32,
@@ -256,6 +265,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
+    position: "absolute",
   },
   uploadBtn: {
     fontFamily: "Roboto-Reg",
@@ -268,7 +278,6 @@ const styles = StyleSheet.create({
     paddingTop: 32,
     position: "relative",
     flex: 1,
-    justifyContent: "flex-end",
   },
 
   titleForm: {
@@ -314,6 +323,19 @@ const styles = StyleSheet.create({
     lineHeight: 19,
     fontFamily: "Roboto-Reg",
     color: "#1B4371",
+  },
+  trash: {
+    width: 70,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#f6f6f6",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 34,
+  },
+  trashBox: {
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 export default CreateScreen;
