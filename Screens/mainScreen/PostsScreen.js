@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet, Text, View, FlatList, Image } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import DefaultScreen from "./nestedScreens/DefaultScreen";
+import CommentsScreen from "./nestedScreens/CommentsScreen";
+import MapScreen from "./nestedScreens/MapScreen";
+
+const NestedScreen = createNativeStackNavigator();
 const PostsScreen = ({ route }) => {
   const [posts, setPosts] = useState([]);
   useEffect(() => {
@@ -8,28 +13,38 @@ const PostsScreen = ({ route }) => {
       setPosts((prevState) => [...prevState, route.params]);
     }
   }, [route.params]);
-  
+
   return (
-    <View style={styles.container}>
-      {/* <View style={styles.publicationsItem}>
-        <View style={styles.userPhoto}>
-          <FontAwesome name="photo" size={44} color="black" />
-        </View>
-        <View style={styles.userInfo}>
-          <Text style={styles.userName}>Natali Romanova</Text>
-          <Text style={styles.userEmail}>email@example.com</Text>
-        </View>
-      </View> */}
-      <FlatList
-        data={posts}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.publicationsItem}>
-            <Image source={{ uri: item.photo }} style={styles.userPhoto} />
-          </View>
-        )}
+    // <View style={styles.container}>
+    //   {/* <View style={styles.publicationsItem}>
+    //     <View style={styles.userPhoto}>
+    //       <FontAwesome name="photo" size={44} color="black" />
+    //     </View>
+    //     <View style={styles.userInfo}>
+    //       <Text style={styles.userName}>Natali Romanova</Text>
+    //       <Text style={styles.userEmail}>email@example.com</Text>
+    //     </View>
+    //   </View> */}
+    //   <FlatList
+    //     data={posts}
+    //     keyExtractor={(item, index) => index.toString()}
+    //     renderItem={({ item }) => (
+    //       <View style={styles.publicationsItem}>
+    //         <Image source={{ uri: item.photo }} style={styles.userPhoto} />
+    //       </View>
+    //     )}
+    //   />
+    // </View>
+
+    <NestedScreen.Navigator>
+      <NestedScreen.Screen
+        name="DefaultScreen"
+        component={DefaultScreen}
+        options={{ headerShown: false }}
       />
-    </View>
+      <NestedScreen.Screen name="Comments" component={CommentsScreen} />
+      <NestedScreen.Screen name="Map" component={MapScreen} />
+    </NestedScreen.Navigator>
   );
 };
 const styles = StyleSheet.create({
@@ -54,10 +69,7 @@ const styles = StyleSheet.create({
   userPhoto: {
     width: 80,
     height: 80,
-    // backgroundColor: "#ff6c0070",
     borderRadius: 16,
-    // justifyContent: "center",
-    // alignItems: "center",
     marginRight: 8,
   },
   userInfo: {},

@@ -21,7 +21,7 @@ import {
 
 const initialState = {
   title: "",
-  location: "",
+  locationValue: "",
 };
 const CreateScreen = ({ navigation }) => {
   const [state, setState] = useState(initialState);
@@ -37,6 +37,7 @@ const CreateScreen = ({ navigation }) => {
 
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [disabledEl, setDisabled] = useState(false);
 
   useEffect(() => {
     const onChange = () => {
@@ -63,6 +64,11 @@ const CreateScreen = ({ navigation }) => {
       setLocation(location);
     })();
   }, []);
+  useEffect(() => {
+    if (!state.title && !state.locationValue) {
+      setDisabled(true);
+    } else setDisabled(false);
+  }, [state.title, state.locationValue]);
 
   const keyboardHide = () => {
     setIsShowKeyboard(false);
@@ -82,7 +88,12 @@ const CreateScreen = ({ navigation }) => {
     }
   };
   const sendPhoto = () => {
-    navigation.navigate("Posts", { photo });
+    navigation.navigate("DefaultScreen", {
+      photo,
+      descriptionTitle: state.title,
+      descriptionLocation: state.locationValue,
+      location,
+    });
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHideAnyTouch}>
@@ -175,26 +186,30 @@ const CreateScreen = ({ navigation }) => {
               />
               <TextInput
                 placeholder="Location"
-                value={state.location}
+                value={state.locationValue}
                 style={{ ...styles.input, marginBottom: 43 }}
-                secureTextEntry={true}
                 onFocus={() => setIsShowKeyboard(true)}
                 onBlur={() => {
                   setIsShowKeyboard(false);
                 }}
                 onChangeText={(value) =>
-                  setState((prevState) => ({ ...prevState, location: value }))
+                  setState((prevState) => ({
+                    ...prevState,
+                    locationValue: value,
+                  }))
                 }
               />
               <TouchableOpacity
                 activeOpacity={0.8}
-                style={styles.btn}
+                style={{
+                  ...styles.btn,
+                  backgroundColor: disabledEl ? "#f6f6f6" : "#ff6c00",
+                }}
                 onPress={() => {
-                  // keyboardHide;
-                  // navigation.navigate("Home", { screen: "Posts" });
                   keyboardHide();
                   sendPhoto();
                 }}
+                disabled={disabledEl}
               >
                 <Text style={styles.btnTitle}>Publish</Text>
               </TouchableOpacity>
@@ -227,7 +242,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     justifyContent: "center",
-    // borderRadius: 20,
+    borderRadius: 20,
   },
 
   flipContainer: { marginLeft: 30, marginBottom: 30 },
